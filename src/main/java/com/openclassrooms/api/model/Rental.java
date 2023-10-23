@@ -1,7 +1,10 @@
 package com.openclassrooms.api.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -9,8 +12,11 @@ import java.math.BigInteger;
 import java.time.Instant;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
-@Table(name = "`RENTALS`")
+@Table(name = "RENTALS")
 public class Rental {
 
     @Id
