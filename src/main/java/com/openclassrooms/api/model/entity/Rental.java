@@ -1,4 +1,4 @@
-package com.openclassrooms.api.model;
+package com.openclassrooms.api.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.math.BigInteger;
 import java.time.Instant;
 
 @Data
@@ -15,30 +16,36 @@ import java.time.Instant;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "MESSAGES")
-public class Message {
+@Table(name = "RENTALS")
+public class Rental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rental_id")
-    private Rental rental;
+    private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(precision = 10)
+    private BigInteger surface;
+
+    @Column(precision = 10)
+    private BigInteger price;
+
+    private String picture;
 
     @Column(length = 2000)
-    private String message;
+    private String  description;
 
-    @CreatedDate()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
+
+    @CreatedDate
     @Column(name = "created_at")
     private Instant createdAt;
 
-    @Column(name = "updated_at")
     @LastModifiedDate
+    @Column(name = "updated_at")
     private Instant updatedAt;
 
 }

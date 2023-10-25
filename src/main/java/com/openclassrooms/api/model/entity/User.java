@@ -1,4 +1,4 @@
-package com.openclassrooms.api.model;
+package com.openclassrooms.api.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
