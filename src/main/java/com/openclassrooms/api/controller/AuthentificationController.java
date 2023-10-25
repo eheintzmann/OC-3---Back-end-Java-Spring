@@ -14,7 +14,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -74,8 +73,8 @@ public class AuthentificationController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
 
-    public ResponseEntity<Response> login(@RequestBody(required = false) Optional<LoginRequest> optRequest, BindingResult result)  {
-        
+    public ResponseEntity<Response> login(@RequestBody(required = false) Optional<LoginRequest> optRequest) {
+
         if (optRequest.isEmpty()) {
             return  new ResponseEntity<>(new MessageResponse(ERROR_MESSAGE), HttpStatus.UNAUTHORIZED);
         }
