@@ -4,7 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.openclassrooms.api.model.request.auth.LoginRequest;
 import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
@@ -28,21 +28,17 @@ class AuthentificationControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    private LoginRequest preAuth = null;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
     @BeforeEach
     void init() {
-        preAuth = LoginRequest.builder()
-                .login("test@test.com")
-                .password("test!31")
-                .build();
 
         userRepository.saveAndFlush(
                 User.builder()
                         .email("test@test.com")
                         .name("test TEST")
-                        .password("test!31")
+                        .password(passwordEncoder.encode("test!31"))
                         .build()
         );
     }
@@ -235,15 +231,20 @@ class AuthentificationControllerTest {
                 },
                 { // Null Login
                     """
-                    {"login": null,"password":"test!31"}
+                    {"login":null,"password":"test!31"}
                     """
                 },
                 { // Missing Login
                     """
-                    {"login":"test TEST","password":"test!31"}
+                    {"password":"test!31"}
                     """
                 },
                 // Password
+                { // Wrong Password
+                    """
+                    {"login":"test@test.com","password":"test31"}
+                    """
+                },
                 { // Blank Password
                     """
                     {"login":"test@test.com","password":""}
@@ -277,7 +278,7 @@ class AuthentificationControllerTest {
     @Test
     void shouldShowUserDetails() throws Exception {
         mockMvc.perform(get("/api/auth/me")
-                        .header("Authorization", preAuth.getLogin())
+                        .header("Authorization", "test@test.com")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("test@test.com"));

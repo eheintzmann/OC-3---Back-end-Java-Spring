@@ -3,21 +3,23 @@ package com.openclassrooms.api.service;
 import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.repository.UserRepository;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Slf4j
 @Data
 @Service
 public class AuthentificationService {
 
     private UserRepository userRepository;
 
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Autowired
     AuthentificationService(UserRepository userRepository) {
+
         this.userRepository = userRepository;
     }
 
@@ -36,7 +38,7 @@ public class AuthentificationService {
         User user = User.builder()
                 .name(name)
                 .email(email)
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .build();
         userRepository.saveAndFlush(user);
 
@@ -56,7 +58,7 @@ public class AuthentificationService {
 
         // If user exists, verify credentials
         User user = optUser.get();
-        if ((user.getEmail().equals(email)) && (user.getPassword().equals(password))) {
+        if ( user.getEmail().equals(email) && passwordEncoder.matches(password, user.getPassword()) ) {
             // if credentials are valid, return token
             return Optional.of(email);
         }
