@@ -1,10 +1,15 @@
 package com.openclassrooms.api.service;
 
+import com.openclassrooms.api.jwt.JwtService;
 import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.repository.UserRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -13,13 +18,22 @@ import java.util.*;
 @Service
 public class AuthentificationService {
 
+    private AuthenticationManager authManager;
+    private JwtService jwtService;
+    private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
-
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private UserDetailsService userDetailsService;
 
     @Autowired
-    AuthentificationService(UserRepository userRepository) {
-
+    AuthentificationService(
+            AuthenticationManager authManager,
+            JwtService jwtService,
+            PasswordEncoder passwordEncoder,
+            UserRepository userRepository
+    ) {
+        this.authManager = authManager;
+        this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
 
@@ -43,32 +57,24 @@ public class AuthentificationService {
         userRepository.saveAndFlush(user);
 
         // Return token
-        return Optional.of(email);
+        return Optional.of(jwtService.generateAccessToken(user));
     }
 
     public Optional<String> loginUser(String email, String password) {
 
-        // Try to Retrieve user
-        Optional<User> optUser = userRepository.findByEmail(email);
+         Authentication authentication = authManager.authenticate(
 
-        if (optUser.isEmpty()) {
-            // If user doesn't exist, do not return token
-            return Optional.empty();
-        }
+                 new UsernamePasswordAuthenticationToken(email, password)
+         );
 
-        // If user exists, verify credentials
-        User user = optUser.get();
-        if ( user.getEmail().equals(email) && passwordEncoder.matches(password, user.getPassword()) ) {
-            // if credentials are valid, return token
-            return Optional.of(email);
-        }
+         User user = (User) authentication.getPrincipal();
 
-        // if credentials are not valid, do not return token
-        return Optional.empty();
+        return Optional.of(jwtService.generateAccessToken(user));
     }
 
-    public Optional<User> authUser(String token) {
-        return this.userRepository.findByEmail(token);
+    public Optional<User> authUser(String username) {
+
+        return this.userRepository.findByEmail(username);
     }
 
 }

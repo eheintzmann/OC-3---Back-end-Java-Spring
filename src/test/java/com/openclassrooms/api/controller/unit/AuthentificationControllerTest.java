@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.openclassrooms.api.controller.AuthentificationController;
+import com.openclassrooms.api.jwt.JwtService;
 import com.openclassrooms.api.model.response.auth.AuthMeResponse;
 import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.service.AuthentificationService;
@@ -39,6 +40,10 @@ class AuthentificationControllerTest {
     @MockBean
     private AuthentificationService authentificationService;
 
+    @MockBean
+    private JwtService jwtService;
+
+
     @BeforeEach
     void init() {
 
@@ -66,7 +71,7 @@ class AuthentificationControllerTest {
 
 
     @Test
-    void shouldRegisterUser() throws Exception {
+    void   shouldRegisterUser() throws Exception {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
