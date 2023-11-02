@@ -1,4 +1,4 @@
-package com.openclassrooms.api.jwt;
+package com.openclassrooms.api.configuration.jwt;
 
 import com.openclassrooms.api.model.entity.User;
 import io.jsonwebtoken.*;

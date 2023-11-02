@@ -1,6 +1,8 @@
 package com.openclassrooms.api.configuration;
 
-import com.openclassrooms.api.service.converter.UserToAuthMeResponse;
+import com.openclassrooms.api.configuration.converter.RentalToRentalResponse;
+import com.openclassrooms.api.configuration.converter.UserToAuthMeResponse;
+import com.openclassrooms.api.configuration.converter.UserToUserResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ConversionServiceFactoryBean;
@@ -16,7 +18,11 @@ public class ConversionConfig {
     public ConversionServiceFactoryBean conversionService() {
         ConversionServiceFactoryBean conversionService = new ConversionServiceFactoryBean();
         HashSet<Converter<?, ?>> converters = new HashSet<>();
+
         converters.add(new UserToAuthMeResponse());
+        converters.add(new UserToUserResponse());
+        converters.add(new RentalToRentalResponse());
+
         conversionService.setConverters(converters);
         return conversionService;
     }

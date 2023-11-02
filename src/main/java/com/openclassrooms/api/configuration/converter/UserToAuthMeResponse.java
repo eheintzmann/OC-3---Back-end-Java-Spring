@@ -1,4 +1,4 @@
-package com.openclassrooms.api.service.converter;
+package com.openclassrooms.api.configuration.converter;
 
 import com.openclassrooms.api.model.response.auth.AuthMeResponse;
 import com.openclassrooms.api.model.entity.User;

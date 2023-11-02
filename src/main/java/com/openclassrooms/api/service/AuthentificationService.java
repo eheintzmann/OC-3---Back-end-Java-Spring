@@ -1,6 +1,6 @@
 package com.openclassrooms.api.service;
 
-import com.openclassrooms.api.jwt.JwtService;
+import com.openclassrooms.api.configuration.jwt.JwtService;
 import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.repository.UserRepository;
 import lombok.Data;

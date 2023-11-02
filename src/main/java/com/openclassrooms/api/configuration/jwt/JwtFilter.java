@@ -1,4 +1,4 @@
-package com.openclassrooms.api.jwt;
+package com.openclassrooms.api.configuration.jwt;
 
 import com.openclassrooms.api.model.entity.User;
 import io.micrometer.common.lang.NonNullApi;
@@ -17,8 +17,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 // JwtFilter extends OncePerRequestFilter class to guarantee a single execution per request
-@Component
 @NonNullApi
+@Component
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
