@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -40,11 +40,11 @@ public class Rental {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(name = "created_at")
     private Instant createdAt;
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private Instant updatedAt;
 

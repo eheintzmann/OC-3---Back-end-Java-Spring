@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -33,12 +33,12 @@ public class Message {
     @Column(length = 2000)
     private String message;
 
-    @CreatedDate()
+    @CreationTimestamp
     @Column(name = "created_at")
     private Instant createdAt;
 
     @Column(name = "updated_at")
-    @LastModifiedDate
+    @UpdateTimestamp
     private Instant updatedAt;
 
 }
