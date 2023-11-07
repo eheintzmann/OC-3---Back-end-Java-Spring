@@ -63,6 +63,7 @@ public class SpringSecurityConfig {
         http.authorizeHttpRequests(authz -> authz
                 .requestMatchers(antMatcher(HttpMethod.POST,"/api/auth/login")).permitAll()
                 .requestMatchers(antMatcher(HttpMethod.POST,"/api/auth/register")).permitAll()
+                .requestMatchers(antMatcher(HttpMethod.GET,"/doc/**")).permitAll()
                 .anyRequest().authenticated()
         );
 
