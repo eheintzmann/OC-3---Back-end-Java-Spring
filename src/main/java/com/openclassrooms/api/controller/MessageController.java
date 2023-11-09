@@ -3,7 +3,6 @@ package com.openclassrooms.api.controller;
 import com.openclassrooms.api.model.request.message.MessageRequest;
 import com.openclassrooms.api.model.response.MessageResponse;
 import com.openclassrooms.api.service.MessageService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.file.AccessDeniedException;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/messages/")
 public class MessageController {

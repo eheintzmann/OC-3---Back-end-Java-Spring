@@ -7,7 +7,6 @@ import com.openclassrooms.api.model.response.MessageResponse;
 import com.openclassrooms.api.model.response.rental.RentalResponse;
 import com.openclassrooms.api.model.response.rental.RentalsResponse;
 import com.openclassrooms.api.service.RentalService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/rentals/")
 public class RentalController {
