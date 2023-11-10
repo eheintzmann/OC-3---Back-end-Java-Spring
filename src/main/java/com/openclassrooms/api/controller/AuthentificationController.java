@@ -7,6 +7,10 @@ import com.openclassrooms.api.model.response.auth.AuthMeResponse;
 import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.service.AuthentificationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -41,6 +45,14 @@ public class AuthentificationController {
     }
 
     @Operation(summary = "register", description = "Sign up")
+    @ApiResponse( responseCode = "200", content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = TokenResponse.class)
+    ))
+    @ApiResponse( responseCode = "400", content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = EmptyResponse.class)
+    ))
     @PostMapping(
             path = "register",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -74,6 +86,14 @@ public class AuthentificationController {
     }
 
     @Operation(summary = "login", description = "Sign in")
+    @ApiResponse( responseCode = "200", content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = TokenResponse.class)
+    ))
+    @ApiResponse( responseCode = "401", content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = MessageResponse.class)
+    ))
     @PostMapping(
             path = "login",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -107,7 +127,19 @@ public class AuthentificationController {
     }
 
     @Operation(summary = "me", description = "Who am I")
-    @GetMapping("me")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @ApiResponse( responseCode = "200", content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = AuthMeResponse.class)
+    ))
+    @ApiResponse( responseCode = "401", content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = EmptyResponse.class)
+    ))
+    @GetMapping(
+            path = "me",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Response> autMe(Principal principalUser) {
 
         if (principalUser == null) {

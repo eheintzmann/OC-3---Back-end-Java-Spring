@@ -3,11 +3,16 @@ package com.openclassrooms.api.controller;
 import com.openclassrooms.api.model.entity.Rental;
 import com.openclassrooms.api.model.request.rentals.CreateRentalRequest;
 import com.openclassrooms.api.model.request.rentals.UpdateRentalRequest;
+import com.openclassrooms.api.model.response.EmptyResponse;
 import com.openclassrooms.api.model.response.MessageResponse;
 import com.openclassrooms.api.model.response.rental.RentalResponse;
 import com.openclassrooms.api.model.response.rental.RentalsResponse;
 import com.openclassrooms.api.service.RentalService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
@@ -21,8 +26,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Tag( name = "rental", description = "Rentals operations" )
+@SecurityRequirement(name = "Bearer Authentication")
 @RestController
 @RequestMapping("/api/rentals/")
+@ApiResponse( responseCode = "200")
+@ApiResponse( responseCode = "401", content = @Content(
+        mediaType = "application/json",
+        schema = @Schema(implementation = EmptyResponse.class)
+))
 public class RentalController {
     private final RentalService rentalService;
     private final ConversionService conversionService;
