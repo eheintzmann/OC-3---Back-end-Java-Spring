@@ -28,7 +28,7 @@ import java.util.Optional;
 @Tag( name = "rental", description = "Rentals operations" )
 @SecurityRequirement(name = "Bearer Authentication")
 @RestController
-@RequestMapping("/api/rentals/")
+@RequestMapping("/api/rentals")
 @ApiResponse( responseCode = "200")
 @ApiResponse( responseCode = "401", content = @Content(
         mediaType = "application/json",
@@ -68,7 +68,7 @@ public class RentalController {
 
     @Operation(summary = "get", description = "Get rental by id")
     @GetMapping(
-            path = "{id}",
+            path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public RentalResponse getRental(@PathVariable int id) {
@@ -102,7 +102,7 @@ public class RentalController {
 
     @Operation(summary = "update", description = "Update existing rental")
     @PutMapping(
-            path = "{id}",
+            path = "/{id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )

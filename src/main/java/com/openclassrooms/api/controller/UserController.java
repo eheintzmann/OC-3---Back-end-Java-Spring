@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Tag( name = "user", description = "Users operations" )
 @RestController
-@RequestMapping("/api/users/")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -42,7 +42,7 @@ public class UserController {
             schema = @Schema(implementation = EmptyResponse.class)
     ))
     @GetMapping(
-            path = "{id}",
+            path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public Response getUser(@PathVariable int id) throws AccessDeniedException {

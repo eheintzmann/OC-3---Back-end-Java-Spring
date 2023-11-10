@@ -22,7 +22,7 @@ import java.nio.file.AccessDeniedException;
 
 @Tag( name = "message", description = "Messages operations" )
 @RestController
-@RequestMapping("/api/messages/")
+@RequestMapping("/api/messages")
 public class MessageController {
 
     private final MessageService messageService;
