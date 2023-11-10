@@ -4,11 +4,12 @@
 API of connection between future tenants and owners for seasonal rental on the Basque coast at first and, later, all over France.
 
 ## Technologies
-* Java
-* Spring Boot
+* Java 17
+* Spring Boot 3.1
+* MySql 8.1
 
 ## Getting started
-1. Don't forget to clone the project repository with [git](https://git-scm.com/).
+Don't forget to clone the project repository with [git](https://git-scm.com/).
 `https://github.com/eheintzmann/OC3-Back-end-Java-Spring.git`
 
 
@@ -36,8 +37,9 @@ Copy `.env.example` file and name it `.env`. In this new file, modify the variab
 
 #### Run the application
 
-1. Run `mvn spring-boot:start`
-2. THe API `http://localhost:8080`
+1. Run `mvn spring-boot:start` in the project root location
+2. THe API is accessible at `http://localhost:8080`
+3. The Swagger UI can be viewed at `http://localhost:8080/doc/swagger-ui.html`
 
 ## Architecture of the project
 * `main/java/com.openclassrooms.api/configuration/` : contains configuration classes

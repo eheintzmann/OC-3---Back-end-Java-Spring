@@ -12,6 +12,7 @@ import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.service.AuthentificationService;
 import com.openclassrooms.api.configuration.converter.UserToAuthMeResponse;
 
+import com.openclassrooms.api.service.storage.StorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,9 @@ class AuthentificationControllerTest {
 
         @MockBean
         private JwtService jwtService;
+
+        @MockBean
+        private StorageService storageService;
 
         @BeforeEach
         void setup() {
@@ -118,6 +122,9 @@ class AuthentificationControllerTest {
 
         @MockBean
         private UserToAuthMeResponse converter;
+
+        @MockBean
+        private StorageService storageService;
 
         @BeforeEach
         void setup() {

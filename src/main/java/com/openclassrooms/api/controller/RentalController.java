@@ -7,6 +7,8 @@ import com.openclassrooms.api.model.response.MessageResponse;
 import com.openclassrooms.api.model.response.rental.RentalResponse;
 import com.openclassrooms.api.model.response.rental.RentalsResponse;
 import com.openclassrooms.api.service.RentalService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Tag( name = "rental", description = "Rentals operations" )
 @RestController
 @RequestMapping("/api/rentals/")
 public class RentalController {
@@ -32,6 +35,7 @@ public class RentalController {
         this.conversionService = conversionService;
     }
 
+    @Operation(summary = "get all", description = "Get all rentals")
     @GetMapping(
             path = "",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -51,6 +55,7 @@ public class RentalController {
                 .build();
     }
 
+    @Operation(summary = "get", description = "Get rental by id")
     @GetMapping(
             path = "{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -64,6 +69,7 @@ public class RentalController {
                 .orElseThrow(() -> new AccessDeniedException(""));
     }
 
+    @Operation(summary = "create", description = "Create new rental")
     @PostMapping(
             path = "",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -83,6 +89,7 @@ public class RentalController {
         return new MessageResponse("Rental created !");
     }
 
+    @Operation(summary = "update", description = "Update existing rental")
     @PutMapping(
             path = "{id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,

@@ -6,6 +6,8 @@ import com.openclassrooms.api.model.request.auth.RegisterRequest;
 import com.openclassrooms.api.model.response.auth.AuthMeResponse;
 import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.service.AuthentificationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Optional;
 
+@Tag( name =  "auth", description = "Authentification operations" )
 @RestController
 @RequestMapping("/api/auth/")
 public class AuthentificationController {
@@ -37,6 +40,7 @@ public class AuthentificationController {
         this.validator = factory.getValidator();
     }
 
+    @Operation(summary = "register", description = "Sign up")
     @PostMapping(
             path = "register",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -69,6 +73,7 @@ public class AuthentificationController {
         );
     }
 
+    @Operation(summary = "login", description = "Sign in")
     @PostMapping(
             path = "login",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -101,6 +106,7 @@ public class AuthentificationController {
         );
     }
 
+    @Operation(summary = "me", description = "Who am I")
     @GetMapping("me")
     public ResponseEntity<Response> autMe(Principal principalUser) {
 
