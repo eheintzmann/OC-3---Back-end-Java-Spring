@@ -1,5 +1,6 @@
 package com.openclassrooms.api.controller;
 
+import com.openclassrooms.api.exception.BadRequestException;
 import com.openclassrooms.api.model.request.message.MessageRequest;
 import com.openclassrooms.api.model.response.EmptyResponse;
 import com.openclassrooms.api.model.response.MessageResponse;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.file.AccessDeniedException;
 
 @Tag( name = "message", description = "Messages operations" )
 @RestController
@@ -50,12 +50,12 @@ public class MessageController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public MessageResponse post(@Valid @RequestBody MessageRequest request) throws AccessDeniedException {
+    public MessageResponse post(@Valid @RequestBody MessageRequest request) throws BadRequestException {
 
-        messageService.sendMessage(request.getMessage(), request.getUserId(), request.getRentalId());
+        if ( messageService.sendMessage(request.getMessage(), request.getUserId(), request.getRentalId()) ) {
 
-        return new MessageResponse("Message sent with success");
+            return new MessageResponse("Message sent with success");
+        }
+        throw new BadRequestException();
     }
-
 }
-

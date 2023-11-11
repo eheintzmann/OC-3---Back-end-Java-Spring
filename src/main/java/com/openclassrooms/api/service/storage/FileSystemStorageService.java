@@ -1,5 +1,6 @@
 package com.openclassrooms.api.service.storage;
 
+import com.openclassrooms.api.exception.StorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,51 +22,48 @@ public class FileSystemStorageService implements StorageService {
     public FileSystemStorageService(@Value("${app.storage.path}") String appStorage) {
 
         if (appStorage.trim().isEmpty()) {
-            log.error("File upload location can not be Empty.");
-            throw new StorageException("File upload location can not be Empty.");
+            log.error("File upload location can not be empty.");
+            throw new StorageException("File upload location can not be empty.");
         }
         this.rootLocation = Path.of(appStorage);
     }
 
+
     @Override
     public void init() {
-
-        mkdir(rootLocation);
+        try {
+            Files.createDirectories(rootLocation);
+        } catch (IOException | UnsupportedOperationException | SecurityException ex) {
+            log.error("Could not init " + rootLocation + " upload directory");
+            throw new StorageException("Could not init " + rootLocation + " upload directory", ex);
+        }
     }
+
 
     @Override
     public String store(MultipartFile file, String subDir) {
         try {
             if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file.");
+                throw new StorageException("Failed to store empty file !");
+            }
+            if (file.getOriginalFilename() == null ) {
+                throw new StorageException("Original filename is null !");
             }
             final Path destinationDir = this.rootLocation.resolve(Path.of(subDir)).normalize().toAbsolutePath();
             final Path tmpDestinationFile = destinationDir.resolve(Path.of(file.getOriginalFilename())).normalize().toAbsolutePath();
             final Path destinationFile = getUniqueFileName(tmpDestinationFile);
 
             if (!destinationFile.startsWith(this.rootLocation.toAbsolutePath())) {
-                // This is a security check
-                throw new StorageException("Cannot store file outside current directory.");
+                // Security check
+                throw new StorageException("Cannot store file outside root location.");
             }
-            mkdir(destinationDir);
-
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
             }
             return destinationFile.getFileName().toString();
 
-        } catch (IOException ex) {
-            log.error("Failed to store file : " + file.getOriginalFilename());
-            throw new StorageException("Failed to store file.", ex);
-        }
-
-    }
-
-    private void mkdir(Path dir) {
-        try {
-            Files.createDirectories(dir);
-        } catch (IOException e) {
-            throw new StorageException("Could not create " + dir + " directory", e);
+        } catch (IOException | UnsupportedOperationException | SecurityException ex) {
+            throw new StorageException("Failed to store file " + file.getOriginalFilename() + " : " + ex.getMessage(), ex);
         }
     }
 
@@ -80,10 +78,9 @@ public class FileSystemStorageService implements StorageService {
 
         Path destinationPath = parentDir.resolve(Path.of(name + "." + ext));
         while (Files.exists(destinationPath)) {
-            destinationPath = parentDir.resolve(Path.of(name + "-" + num + "." + ext));
             num++;
+            destinationPath = parentDir.resolve(Path.of(name + "-" + num + "." + ext));
         }
         return destinationPath;
     }
-
 }

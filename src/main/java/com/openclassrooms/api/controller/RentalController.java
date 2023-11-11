@@ -1,5 +1,6 @@
 package com.openclassrooms.api.controller;
 
+import com.openclassrooms.api.exception.InvalidCredentialsException;
 import com.openclassrooms.api.model.entity.Rental;
 import com.openclassrooms.api.model.request.rentals.CreateRentalRequest;
 import com.openclassrooms.api.model.request.rentals.UpdateRentalRequest;
@@ -14,17 +15,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
+@Slf4j
 @Tag( name = "rental", description = "Rentals operations" )
 @SecurityRequirement(name = "Bearer Authentication")
 @RestController
@@ -46,6 +49,7 @@ public class RentalController {
         this.conversionService = conversionService;
     }
 
+
     @Operation(summary = "get all", description = "Get all rentals")
     @GetMapping(
             path = "",
@@ -66,19 +70,21 @@ public class RentalController {
                 .build();
     }
 
+
     @Operation(summary = "get", description = "Get rental by id")
     @GetMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public RentalResponse getRental(@PathVariable int id) {
+    public RentalResponse getRental(@PathVariable int id) throws InvalidCredentialsException {
 
         Optional<Rental> optRental = rentalService.getRental(id);
 
         return optRental.map(
                 rental -> conversionService.convert(rental, RentalResponse.class))
-                .orElseThrow(() -> new AccessDeniedException(""));
+                .orElseThrow(InvalidCredentialsException::new);
     }
+
 
     @Operation(summary = "create", description = "Create new rental")
     @PostMapping(
@@ -86,19 +92,24 @@ public class RentalController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public MessageResponse postRental(@ModelAttribute CreateRentalRequest request, Principal principal) throws IOException {
+    public MessageResponse postRental(
+            @ModelAttribute CreateRentalRequest request,
+            Principal principal
+    ) throws InvalidCredentialsException {
 
-        rentalService.saveRental(
+        if ( rentalService.saveRental(
                 request.getName(),
                 request.getSurface(),
                 request.getPrice(),
                 request.getPicture(),
                 request.getDescription(),
                 principal.getName()
-        );
-
-        return new MessageResponse("Rental created !");
+        )) {
+            return new MessageResponse("Rental created !");
+        }
+        throw new InvalidCredentialsException();
     }
+
 
     @Operation(summary = "update", description = "Update existing rental")
     @PutMapping(
@@ -106,16 +117,19 @@ public class RentalController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public MessageResponse putRental(@PathVariable int id, @ModelAttribute UpdateRentalRequest request) throws java.nio.file.AccessDeniedException {
+    public MessageResponse putRental(@PathVariable int id, @ModelAttribute UpdateRentalRequest request)
+            throws InvalidCredentialsException {
 
-        rentalService.updateRental(
-                id,
-                request.getName(),
-                request.getSurface(),
-                request.getPrice(),
-                request.getDescription()
-                );
-
-        return new MessageResponse("Rental updated !");
+        if ( rentalService.updateRental(
+                    id,
+                    request.getName(),
+                    request.getSurface(),
+                    request.getPrice(),
+                    request.getDescription()
+            )
+        ) {
+            return new MessageResponse("Rental updated !");
+        }
+        throw new InvalidCredentialsException();
     }
 }

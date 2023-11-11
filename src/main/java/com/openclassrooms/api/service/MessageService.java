@@ -6,11 +6,12 @@ import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.repository.MessageRepository;
 import com.openclassrooms.api.repository.RentalRepository;
 import com.openclassrooms.api.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class MessageService {
 
@@ -24,26 +25,27 @@ public class MessageService {
         this.rentalRepository = rentalRepository;
     }
 
-    public void sendMessage(String messageBody, int userId, int rentalId) throws AccessDeniedException {
+    public boolean sendMessage(String messageBody, int userId, int rentalId) {
 
         Optional<User> optUser = userRepository.findById(userId);
 
         if (optUser.isEmpty()) {
-            throw new AccessDeniedException("");
+            log.error("User " + userId + " not found !");
+            return false;
         }
-
         Optional<Rental> optRental = rentalRepository.findById(rentalId);
 
         if (optRental.isEmpty()) {
-            throw new AccessDeniedException("");
+            log.error("Rental " + rentalId + " not found !");
+            return false;
         }
-
         Message message = Message.builder()
                 .message(messageBody)
                 .user(optUser.get())
                 .rental(optRental.get())
                 .build();
-
         messageRepository.save(message);
+
+        return true;
     }
 }

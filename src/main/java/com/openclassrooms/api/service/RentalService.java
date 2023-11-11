@@ -1,18 +1,20 @@
 package com.openclassrooms.api.service;
 
+import com.openclassrooms.api.exception.StorageException;
 import com.openclassrooms.api.model.entity.Rental;
 import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.repository.RentalRepository;
 import com.openclassrooms.api.repository.UserRepository;
 import com.openclassrooms.api.service.storage.StorageService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.math.BigInteger;
-import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class RentalService {
     private final RentalRepository rentalRepository;
@@ -29,40 +31,51 @@ public class RentalService {
         this.storageService = storageService;
     }
 
+
     public Optional<Rental> getRental(final int id) {
         return rentalRepository.findById(id);
     }
+
 
     public Iterable<Rental> listRentals() {
         return rentalRepository.findAll();
     }
 
-    public void saveRental(
+
+    public boolean saveRental(
             String name,
             BigInteger surface,
             BigInteger price,
             MultipartFile picture,
             String description,
             String username
-    ) throws AccessDeniedException {
+    ) {
 
         final String contentType = picture.getContentType();
         if ( contentType == null || !contentType.startsWith("image") ) {
-            throw new AccessDeniedException(picture.getOriginalFilename() + " is not an image !");
+            log.error(picture.getOriginalFilename() + " is not an image !");
+            return false;
         }
 
         Optional<User> optUser = userRepository.findByEmail(username);
 
         if (optUser.isEmpty()) {
-            throw new AccessDeniedException("Invalid username");
+            log.error("Invalid username");
+            return false;
         }
 
         final String subdir = "images";
-        final String filename = storageService.store(picture, subdir);
-        final String imageUrl = ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .pathSegment(subdir, filename)
-                .toUriString();
+        String imageUrl;
+        try {
+            final String filename = storageService.store(picture, subdir);
+            imageUrl = ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .pathSegment(subdir, filename)
+                    .toUriString();
+        } catch (IllegalArgumentException | StorageException ex) {
+            log.error(ex.getMessage());
+            return false;
+        }
 
         Rental rental = Rental.builder()
                 .name(name)
@@ -74,22 +87,26 @@ public class RentalService {
                 .build();
 
         rentalRepository.saveAndFlush(rental);
+
+        return true;
     }
 
-    public void updateRental(int id, String name, BigInteger surface, BigInteger price, String description) throws AccessDeniedException {
 
-        Optional<Rental> optionalRental = rentalRepository.findById(id);
+    public boolean updateRental(int id, String name, BigInteger surface, BigInteger price, String description) {
 
-        if (optionalRental.isEmpty()) {
-            throw new AccessDeniedException("No Rental with id : " + id);
+        Optional<Rental> optRental = rentalRepository.findById(id);
+
+        if (optRental.isEmpty()) {
+            log.error("Rental " + id + " does not exist !");
+            return false;
         }
-        Rental rental = optionalRental.get();
+        Rental rental = optRental.get();
         rental.setName(name);
         rental.setSurface(surface);
         rental.setPrice(price);
         rental.setDescription(description);
 
         rentalRepository.save(rental);
+        return true;
     }
-
 }

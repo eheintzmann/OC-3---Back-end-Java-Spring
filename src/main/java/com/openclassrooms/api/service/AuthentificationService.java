@@ -4,16 +4,19 @@ import com.openclassrooms.api.configuration.jwt.JwtService;
 import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.repository.UserRepository;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Slf4j
 @Data
 @Service
 public class AuthentificationService {
@@ -48,12 +51,14 @@ public class AuthentificationService {
         }
         // If user doesn't exist, register it
 
-        // Create a new one
+        // Create new user
         User user = User.builder()
                 .name(name)
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .build();
+
+        // Save user in db
         userRepository.saveAndFlush(user);
 
         // Return token
@@ -62,12 +67,17 @@ public class AuthentificationService {
 
     public Optional<String> loginUser(String email, String password) {
 
-         Authentication authentication = authManager.authenticate(
+        Authentication authentication;
+        try {
+            authentication = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
+        } catch (AuthenticationException ex) {
+            log.error(ex.getMessage());
+            return Optional.empty();
+        }
 
-                 new UsernamePasswordAuthenticationToken(email, password)
-         );
-
-         User user = (User) authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
 
         return Optional.of(jwtService.generateAccessToken(user));
     }

@@ -1,5 +1,7 @@
 package com.openclassrooms.api.controller;
 
+import com.openclassrooms.api.exception.BadRequestException;
+import com.openclassrooms.api.exception.InvalidCredentialsException;
 import com.openclassrooms.api.model.request.auth.LoginRequest;
 import com.openclassrooms.api.model.response.*;
 import com.openclassrooms.api.model.request.auth.RegisterRequest;
@@ -10,21 +12,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Optional;
 
+@Slf4j
 @Tag( name =  "auth", description = "Authentification operations" )
 @RestController
 @RequestMapping("/api/auth/")
@@ -45,44 +47,41 @@ public class AuthentificationController {
     }
 
     @Operation(summary = "register", description = "Sign up")
-    @ApiResponse( responseCode = "200", content = @Content(
-            mediaType = "application/json",
-            schema = @Schema(implementation = TokenResponse.class)
-    ))
-    @ApiResponse( responseCode = "400", content = @Content(
-            mediaType = "application/json",
-            schema = @Schema(implementation = EmptyResponse.class)
-    ))
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = TokenResponse.class)
+            )),
+            @ApiResponse(responseCode = "400", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = EmptyResponse.class)
+            ))
+    })
     @PostMapping(
             path = "register",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Response> register(@RequestBody(required = false) Optional<RegisterRequest> optRequest) {
+    public TokenResponse register(@RequestBody(required = false) Optional<RegisterRequest> optRequest)
+            throws  BadRequestException {
 
         if (optRequest.isEmpty()) {
-            return  new ResponseEntity<>(new EmptyResponse(), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException();
         }
         RegisterRequest request = optRequest.get();
 
         if (!validator.validate(request).isEmpty()) {
-            return new ResponseEntity<>(new EmptyResponse(), HttpStatus.BAD_REQUEST);
+            throw new BadRequestException();
         }
-
         Optional<String> optToken;
-        try {
-            optToken = this.authentificationService.registerUser(
-                    request.getEmail(),
-                    request.getName(),
-                    request.getPassword()
-            );
-        } catch (BadCredentialsException ex) {
-
-            return new ResponseEntity<>(new EmptyResponse(), HttpStatus.BAD_REQUEST);
-        }
-        return optToken.<ResponseEntity<Response>>map(token -> ResponseEntity
-                .ok(new TokenResponse(token))).orElseGet(() -> new ResponseEntity<>(new EmptyResponse(), HttpStatus.BAD_REQUEST)
+        optToken = this.authentificationService.registerUser(
+                request.getEmail(),
+                request.getName(),
+                request.getPassword()
         );
+        return optToken.map(TokenResponse::new)
+                .orElseThrow(BadRequestException::new);
     }
 
     @Operation(summary = "login", description = "Sign in")
@@ -100,30 +99,23 @@ public class AuthentificationController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
 
-    public ResponseEntity<Response> login(@RequestBody(required = false) Optional<LoginRequest> optRequest) {
+    public TokenResponse login(@RequestBody(required = false) Optional<LoginRequest> optRequest)
+            throws InvalidCredentialsException {
 
         if (optRequest.isEmpty()) {
-            return  new ResponseEntity<>(new MessageResponse(ERROR_MESSAGE), HttpStatus.UNAUTHORIZED);
+            throw new InvalidCredentialsException(ERROR_MESSAGE);
         }
         LoginRequest request = optRequest.get();
 
         if (!validator.validate(request).isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse(ERROR_MESSAGE), HttpStatus.UNAUTHORIZED);
+            throw new InvalidCredentialsException(ERROR_MESSAGE);
         }
-        Optional<String> optToken;
-        try {
-            optToken = this.authentificationService.loginUser(
-                    request.getLogin(),
-                    request.getPassword()
-            );
-        } catch (BadCredentialsException ex) {
-
-            return new ResponseEntity<>(new MessageResponse(ERROR_MESSAGE), HttpStatus.UNAUTHORIZED);
-        }
-        return optToken.<ResponseEntity<Response>>map(token -> ResponseEntity
-                .ok(new TokenResponse(token))).orElseGet(
-                        () -> new ResponseEntity<>(new MessageResponse(ERROR_MESSAGE), HttpStatus.UNAUTHORIZED)
+        Optional<String> optToken = this.authentificationService.loginUser(
+                request.getLogin(),
+                request.getPassword()
         );
+        return optToken.map(TokenResponse::new)
+                .orElseThrow(() -> new InvalidCredentialsException(ERROR_MESSAGE));
     }
 
     @Operation(summary = "me", description = "Who am I")
@@ -140,16 +132,16 @@ public class AuthentificationController {
             path = "me",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Response> autMe(Principal principalUser) {
+    public AuthMeResponse autMe(Principal principal) throws InvalidCredentialsException {
 
-        if (principalUser == null) {
-            return new ResponseEntity<>(new EmptyResponse(), HttpStatus.UNAUTHORIZED);
+        if (principal == null) {
+            log.error("Principal is null !");
+            throw new InvalidCredentialsException();
         }
-        Optional<User> optUser = authentificationService.authUser(principalUser.getName());
+        Optional<User> optUser = authentificationService.authUser(principal.getName());
 
-        return optUser.<ResponseEntity<Response>>map(user -> ResponseEntity
-                .ok(conversionService.convert(user, AuthMeResponse.class)))
-                .orElseGet(() -> new ResponseEntity<>(new EmptyResponse(), HttpStatus.UNAUTHORIZED));
+        return optUser.map(user -> conversionService.convert(user, AuthMeResponse.class))
+                .orElseThrow(InvalidCredentialsException::new);
     }
 
 }

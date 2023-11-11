@@ -1,4 +1,4 @@
-package com.openclassrooms.api.service.storage;
+package com.openclassrooms.api.exception;
 
 public class StorageException extends RuntimeException {
 

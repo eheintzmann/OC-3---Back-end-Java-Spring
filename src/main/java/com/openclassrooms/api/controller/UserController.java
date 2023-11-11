@@ -1,8 +1,7 @@
 package com.openclassrooms.api.controller;
 
-import com.openclassrooms.api.model.entity.User;
+import com.openclassrooms.api.exception.InvalidCredentialsException;
 import com.openclassrooms.api.model.response.EmptyResponse;
-import com.openclassrooms.api.model.response.Response;
 import com.openclassrooms.api.model.response.user.UserResponse;
 import com.openclassrooms.api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,8 +14,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
-import java.util.Optional;
 
 @Tag( name = "user", description = "Users operations" )
 @RestController
@@ -45,11 +42,9 @@ public class UserController {
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Response getUser(@PathVariable int id) throws AccessDeniedException {
-        Optional<User> optUser = userService.getUser(id);
+    public UserResponse getUser(@PathVariable int id) throws InvalidCredentialsException {
 
-        return optUser.<Response>map(user ->
-                conversionService.convert(user, UserResponse.class))
-                .orElseThrow(() -> new AccessDeniedException(""));
+        return userService.getUser(id).map(user -> conversionService.convert(user, UserResponse.class))
+                .orElseThrow(InvalidCredentialsException::new);
     }
 }
