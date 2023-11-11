@@ -111,7 +111,7 @@ public class AuthentificationController {
             throw new InvalidCredentialsException(ERROR_MESSAGE);
         }
         Optional<String> optToken = this.authentificationService.loginUser(
-                request.getLogin(),
+                request.getEmail(),
                 request.getPassword()
         );
         return optToken.map(TokenResponse::new)

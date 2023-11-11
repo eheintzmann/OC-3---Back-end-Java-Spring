@@ -43,7 +43,7 @@ public class MessageController {
     ))
     @ApiResponse( responseCode = "401", content = @Content(
             mediaType = "application/json",
-            schema = @Schema(implementation = MessageResponse.class)
+            schema = @Schema(implementation = EmptyResponse.class)
     ))
     @PostMapping(
             path = "",
