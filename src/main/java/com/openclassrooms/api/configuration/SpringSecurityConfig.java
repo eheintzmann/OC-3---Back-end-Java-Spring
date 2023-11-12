@@ -3,6 +3,7 @@ package com.openclassrooms.api.configuration;
 import com.openclassrooms.api.configuration.jwt.JwtFilter;
 import com.openclassrooms.api.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
@@ -61,11 +63,12 @@ public class SpringSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authz -> authz
-                .requestMatchers(antMatcher(HttpMethod.POST,"/api/auth/login")).permitAll()
-                .requestMatchers(antMatcher(HttpMethod.POST,"/api/auth/register")).permitAll()
-                .requestMatchers(antMatcher(HttpMethod.GET,"/images/**")).permitAll()
-                .requestMatchers(antMatcher(HttpMethod.GET,"/doc/**")).permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers(antMatcher(HttpMethod.POST, "/api/auth/login")).permitAll()
+                .requestMatchers(antMatcher(HttpMethod.POST, "/api/auth/register")).permitAll()
+                .requestMatchers(antMatcher(HttpMethod.GET, "/images/**")).permitAll()
+                .requestMatchers(antMatcher(HttpMethod.GET, "/doc/**")).permitAll()
+                .requestMatchers(antMatcher("/api/**")).authenticated()
+                .anyRequest().denyAll()
         );
 
         http.exceptionHandling( exceptions -> exceptions
