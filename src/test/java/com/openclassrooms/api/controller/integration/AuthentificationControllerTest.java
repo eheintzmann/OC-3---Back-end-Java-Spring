@@ -86,7 +86,7 @@ class AuthentificationControllerTest {
     void shouldLoginUser() throws Exception {
 
         String jsonString = """
-            {"login":"test@test.com","password":"test!31"}
+            {"email":"test@test.com","password":"test!31"}
             """;
 
         mockMvc.perform(post("/api/auth/login")

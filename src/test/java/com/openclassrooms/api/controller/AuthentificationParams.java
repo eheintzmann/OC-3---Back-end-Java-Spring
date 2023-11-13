@@ -107,28 +107,28 @@ public class AuthentificationParams {
                 },
 //                { // Additional field "name"
 //                    """
-//                    {"login":"test@test.com","suppl":"test TEST","password":"test!31"}
+//                    {"email":"test@test.com","suppl":"test TEST","password":"test!31"}
 //                    """
 //                },
                 { // Non Existing User
                         """
-                    {"login":"none@test.com","password":"test!31"}
+                    {"email":"none@test.com","password":"test!31"}
                     """
                 },
                 // Login
                 { // Invalid Login
                         """
-                    {"login":"test","password":"test!31"}
+                    {"email":"test","password":"test!31"}
                     """
                 },
                 { // Blank Login
                         """
-                    {"login":"","password":"test!31"}
+                    {"email":"","password":"test!31"}
                     """
                 },
                 { // Null Login
                         """
-                    {"login":null,"password":"test!31"}
+                    {"email":null,"password":"test!31"}
                     """
                 },
                 { // Missing Login
@@ -139,22 +139,22 @@ public class AuthentificationParams {
                 // Password
                 { // Wrong Password
                         """
-                    {"login":"test@test.com","password":"test31"}
+                    {"email":"test@test.com","password":"test31"}
                     """
                 },
                 { // Blank Password
                         """
-                    {"login":"test@test.com","password":""}
+                    {"email":"test@test.com","password":""}
                     """
                 },
                 { // Null Password
                         """
-                    {"login":"test@test.com","password":null}
+                    {"email":"test@test.com","password":null}
                     """
                 },
                 { // Missing Password
                         """
-                    {"login":"new@test.com"}
+                    {"email":"new@test.com"}
                     """
                 }
         };
