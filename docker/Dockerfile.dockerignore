@@ -1,0 +1,8 @@
+.idea/
+.vscode/
+.editorconfig
+README.md
+HELP.md
+target/
+api.iml
+.env.example

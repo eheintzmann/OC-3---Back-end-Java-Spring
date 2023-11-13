@@ -29,12 +29,14 @@ Don't forget to clone the project repository with [git](https://git-scm.com/).
 1. Install [Docker](https://docs.docker.com/get-docker/)
 2. Install [Docker Compose](https://docs.docker.com/compose/install/)
 
-#### Run MySQL database and adminer
+#### Run application
 
 1. Go to docker directory (`cd docker`)
 2. Run Docker Compose (`docker compose up`)
-3. (Optional) Navigate to `http://localhost:9000` or `http://127.0.0.1:9000` (Don't use `https`)
-
+3. Wait until spring is started 
+4. API is accessible at `http://localhost:9001` or `http://127.0.0.1:9001`
+5. Swagger UI can be viewed at : http://localhost:9001/doc/swagger-ui.html
+6. (Optional) Adminer is available at `http://localhost:8080` or `http://127.0.0.1:8080`
 
 ### Option 2 : manual installation
 **Please note that the images you upload will be stored by default
@@ -67,17 +69,9 @@ This connects to MySQL as root and allows access to the user from all hosts. Thi
 2. [Install Maven](https://maven.apache.org/install.html)
 
 #### Run the application with Maven
-* Run `mvn spring-boot:run` in the project root location
-
-#### Run the application as jar
-1. Build application with Maven
-2. 
-
-### API URLs
-API is accessible at : http://localhost:8080/api/
-
-### Swagger URL
-The Swagger UI can be viewed at : http://localhost:8080/doc/swagger-ui.html
+1. Run `mvn spring-boot:run` in the project root location
+2. API is accessible at : http://localhost:9000/api/
+3. Swagger UI can be viewed at : http://localhost:9000/doc/swagger-ui.html
 
 ## Architecture of the project
 * `main/java/com.openclassrooms.api/configuration/` : contains configuration classes

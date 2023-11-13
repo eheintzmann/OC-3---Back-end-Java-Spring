@@ -42,13 +42,14 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public String store(MultipartFile file, String subDir) {
+        if (file.isEmpty()) {
+            throw new StorageException("Failed to store empty file !");
+        }
+        if (file.getOriginalFilename() == null) {
+            throw new StorageException("Original filename is null !");
+        }
+
         try {
-            if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file !");
-            }
-            if (file.getOriginalFilename() == null ) {
-                throw new StorageException("Original filename is null !");
-            }
             final Path destinationDir = this.rootLocation.resolve(Path.of(subDir)).normalize().toAbsolutePath();
             final Path tmpDestinationFile = destinationDir.resolve(Path.of(file.getOriginalFilename())).normalize().toAbsolutePath();
             final Path destinationFile = getUniqueFileName(tmpDestinationFile);
@@ -57,6 +58,9 @@ public class FileSystemStorageService implements StorageService {
                 // Security check
                 throw new StorageException("Cannot store file outside root location.");
             }
+
+            Files.createDirectories(destinationDir);
+
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
             }
