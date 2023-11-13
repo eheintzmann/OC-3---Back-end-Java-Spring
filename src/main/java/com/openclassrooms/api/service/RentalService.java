@@ -33,11 +33,15 @@ public class RentalService {
 
 
     public Optional<Rental> getRental(final int id) {
+
+        // Retrieve rental
         return rentalRepository.findById(id);
     }
 
 
     public Iterable<Rental> listRentals() {
+
+        // Retrieve rentals
         return rentalRepository.findAll();
     }
 
@@ -57,13 +61,16 @@ public class RentalService {
             return false;
         }
 
+        // Retrieve user
         Optional<User> optUser = userRepository.findByEmail(username);
 
+        // Check user existence
         if (optUser.isEmpty()) {
             log.error("Invalid username");
             return false;
         }
 
+        // Store rental image
         final String subdir = "images";
         String imageUrl;
         try {
@@ -77,6 +84,7 @@ public class RentalService {
             return false;
         }
 
+        // Create rental
         Rental rental = Rental.builder()
                 .name(name)
                 .surface(surface)
@@ -86,27 +94,46 @@ public class RentalService {
                 .owner(optUser.get())
                 .build();
 
+        // Save rental
         rentalRepository.saveAndFlush(rental);
-
         return true;
     }
 
 
-    public boolean updateRental(int id, String name, BigInteger surface, BigInteger price, String description) {
+    public boolean updateRental(
+            int id,
+            String name,
+            BigInteger surface,
+            BigInteger price,
+            String description,
+            String principalName
+    ) {
 
+        // Retrieve rental
         Optional<Rental> optRental = rentalRepository.findById(id);
 
+        // Check rental existence
         if (optRental.isEmpty()) {
             log.error("Rental " + id + " does not exist !");
             return false;
         }
+
         Rental rental = optRental.get();
+
+        // Check rental owner
+        if ( !principalName.equals(rental.getOwner().getEmail()) ) {
+            log.error(principalName + " cannot update Rental owned by " + rental.getOwner().getEmail());
+            return false;
+        }
+
+        // Update rental
         rental.setName(name);
         rental.setSurface(surface);
         rental.setPrice(price);
         rental.setDescription(description);
 
-        rentalRepository.save(rental);
+        // Save rental
+        rentalRepository.saveAndFlush(rental);
         return true;
     }
 }

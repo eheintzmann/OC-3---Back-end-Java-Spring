@@ -56,13 +56,13 @@ public class RentalController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public RentalsResponse getRentals() {
-        
-        
+
+
         Iterable<Rental> rentals = rentalService.listRentals();
-        
+
         List<RentalResponse> rentalsList = new ArrayList<>();
 
-        for ( Rental rental : rentals ) {
+        for (Rental rental : rentals) {
             rentalsList.add(conversionService.convert(rental, RentalResponse.class));
         }
         return RentalsResponse.builder()
@@ -81,7 +81,7 @@ public class RentalController {
         Optional<Rental> optRental = rentalService.getRental(id);
 
         return optRental.map(
-                rental -> conversionService.convert(rental, RentalResponse.class))
+                        rental -> conversionService.convert(rental, RentalResponse.class))
                 .orElseThrow(InvalidCredentialsException::new);
     }
 
@@ -97,7 +97,7 @@ public class RentalController {
             Principal principal
     ) throws InvalidCredentialsException {
 
-        if ( rentalService.saveRental(
+        if (rentalService.saveRental(
                 request.getName(),
                 request.getSurface(),
                 request.getPrice(),
@@ -117,16 +117,22 @@ public class RentalController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public MessageResponse putRental(@PathVariable int id, @ModelAttribute UpdateRentalRequest request)
+    public MessageResponse putRental(
+            @PathVariable int id,
+            @ModelAttribute UpdateRentalRequest request,
+            Principal principal
+    )
             throws InvalidCredentialsException {
 
-        if ( rentalService.updateRental(
-                    id,
-                    request.getName(),
-                    request.getSurface(),
-                    request.getPrice(),
-                    request.getDescription()
-            )
+        if (rentalService.updateRental(
+                id,
+                request.getName(),
+                request.getSurface(),
+                request.getPrice(),
+                request.getDescription(),
+                principal.getName()
+
+        )
         ) {
             return new MessageResponse("Rental updated !");
         }
