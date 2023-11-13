@@ -15,12 +15,13 @@ Don't forget to clone the project repository with [git](https://git-scm.com/).
 `https://github.com/eheintzmann/OC3-Back-end-Java-Spring.git`
 
 
-Copy `.env.example` file and name it `.env`. In this new file, modify the variables
+**Copy `.env.example` file and name it `.env`. In this new file, modify the variables :**
 * `MYSQL_ROOT_PASSWORD` : specifies the password for the MySQL _root_ superuser account
 * `MYSQL_DATABASE` : specify the name of a database to be created and used
 * `MYSQL_USER` : create a new user that will be granted superuser access on the created database
 * `MYSQL_PASSWORD` : specify the password of the created user
 * `JWT_SECRET` : a secret key used to generate and verify Access tokens
+* `JWT_SALT` :  additional string
 
 ### Option 1 : Docker Compose
 #### Install dependencies
@@ -36,6 +37,9 @@ Copy `.env.example` file and name it `.env`. In this new file, modify the variab
 
 
 ### Option 2 : manual installation
+**Please note that the images you upload will be stored by default
+in the OpenClassRooms/Rental subdirectory of your personal folder**
+
 #### Install MySQL
 
 Official documentation is available at `https://dev.mysql.com/doc/` in installation section.
@@ -44,12 +48,14 @@ Official documentation is available at `https://dev.mysql.com/doc/` in installat
 2. Install MySQL
 3. Start MySQL (verify with `mysql -V`) 
 4. If not done during installation, define a root password : `mysqladmin -u root password 'YourRootPassword'`
-5. Connect yourself to MySQL as root : `mysql -u root -p`
-6. Create the new database `CREATE DATABASE db_rental;`
-7. Create the user `CREATE USER 'springuser'@'%' IDENTIFIED BY 'YourPassword';`
-8. Give all privileges to the new user on newly created database : `GRANT ALL ON db_rental.* TO 'springuser'@'%';`
-9. Quit MySQL : `exit;`
-10. 
+
+#### Create MySQL user and database
+1. Connect yourself to MySQL as root : `mysql -u root -p`
+2. Create the new database `CREATE DATABASE db_rental;`
+3. Create the user `CREATE USER 'springuser'@'%' IDENTIFIED BY 'YourPassword';`
+4. Give all privileges to the new user on newly created database : `GRANT ALL ON db_rental.* TO 'springuser'@'%';`
+5. Quit MySQL : `exit;`
+
 This connects to MySQL as root and allows access to the user from all hosts. This is not the recommended way for a production server.
 
 #### Install Java Development Kit 17

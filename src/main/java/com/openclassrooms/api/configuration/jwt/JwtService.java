@@ -22,12 +22,13 @@ import java.util.Date;
 @Service
 public class JwtService {
     private static final Duration EXPIRE_DURATION = Duration.parse("PT24H");
-    private  static final String SALT = "salt";
-
     private final SecretKey secretKey;
 
-    public JwtService(@Value("${app.jwt.secret}") String appJwtSecret) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        this.secretKey = getKeyFromPassword(appJwtSecret, SALT);
+    public JwtService(
+            @Value("${app.jwt.secret}") String appJwtSecret,
+            @Value("${app.jwt.salt}") String appJwtSalt
+    ) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        this.secretKey = getKeyFromPassword(appJwtSecret, appJwtSalt);
     }
 
     public String generateAccessToken(User user) {
@@ -49,15 +50,15 @@ public class JwtService {
 
             return true;
         } catch (ExpiredJwtException ex) {
-            log.error("JWT expired" + ex.getMessage());
-        } catch (IllegalArgumentException ex ) {
-            log.error("Token is null, empty or only whitespace" + ex.getMessage());
+            log.error("JWT expired !" + ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            log.error("Token is null, empty or only whitespace !" + ex.getMessage());
         } catch (MalformedJwtException ex) {
-            log.error("Token is invalid" + ex.getMessage());
+            log.error("Token is invalid !" + ex.getMessage());
         } catch (UnsupportedJwtException ex) {
-            log.error("JWT is not supported" + ex.getMessage());
+            log.error("JWT is not supported !" + ex.getMessage());
         } catch (SignatureException ex) {
-            log.error("Signature validation failed" + ex.getMessage());
+            log.error("Signature validation failed !" + ex.getMessage());
         }
         return false;
     }
@@ -78,7 +79,7 @@ public class JwtService {
             throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), 65536, 512);
+        KeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), 1000, 512);
 
         return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "HmacSHA512");
     }

@@ -59,29 +59,36 @@ public class SpringSecurityConfig {
         // Use stateless session; session won't be used to store user's state.
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // We don't need CSRF
+        // CSRF is not needed
         http.csrf(AbstractHttpConfigurer::disable);
 
-        http.authorizeHttpRequests(authz -> authz
-                .requestMatchers(antMatcher(HttpMethod.POST, "/api/auth/login")).permitAll()
-                .requestMatchers(antMatcher(HttpMethod.POST, "/api/auth/register")).permitAll()
-                .requestMatchers(antMatcher(HttpMethod.GET, "/images/**")).permitAll()
-                .requestMatchers(antMatcher(HttpMethod.GET, "/doc/**")).permitAll()
+        http.authorizeHttpRequests(requestMatcherRegistry -> requestMatcherRegistry
+                // Do not authenticate these requests
+                .requestMatchers(
+                        antMatcher(HttpMethod.POST, "/api/auth/login"),
+                        antMatcher(HttpMethod.POST, "/api/auth/register"),
+                        antMatcher(HttpMethod.GET, "/images/**"),
+                        antMatcher(HttpMethod.GET, "/doc/**")
+                ).permitAll()
+                // Authenticate these requests
                 .requestMatchers(antMatcher("/api/**")).authenticated()
+                // Deny all other requests
                 .anyRequest().denyAll()
         );
 
-        http.exceptionHandling( exceptions -> exceptions
-                .authenticationEntryPoint( (request, response, ex) -> response
+        // Send Http status 401 when error occurs
+        http.exceptionHandling(handlingConfigurer -> handlingConfigurer
+                .authenticationEntryPoint((request, response, exception) -> response
                         .sendError(
                                 HttpServletResponse.SC_UNAUTHORIZED,
-                                ex.getMessage()
-                        ))
+                                exception.getMessage()
+                        )
+                )
         );
 
+        // Add a filter to validate the tokens with every request
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 }
