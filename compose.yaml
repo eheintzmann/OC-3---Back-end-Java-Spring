@@ -1,0 +1,22 @@
+include:
+  - compose-mysql.yaml
+
+services:
+  rental:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+      target: run
+    env_file: .env
+    ports:
+      - "${TOMCAT_PORT:-9000}:9000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - MYSQL_HOST=mysql
+      - STORAGE_PATH=/OpenClassrooms/Rental
+    volumes:
+      - rental_data:/OpenClassrooms/Rental
+volumes:
+  rental_data:
