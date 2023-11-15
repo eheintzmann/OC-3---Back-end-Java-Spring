@@ -42,13 +42,11 @@ public class AuthentificationService {
 
     public Optional<String> registerUser(String email, String name, String password) {
 
-        // Try to Retrieve user
-        // TODO: do not retrieve user, just verify existence
-        Optional<User> optUser = userRepository.findByEmail(email);
-        if (optUser.isPresent()) {
-            // If user exists, stop registration, do not return a token
+        // If user exists, stop registration, do not return a token
+        if (userRepository.existsByEmail(email)) {
             return Optional.empty();
         }
+
         // If user doesn't exist, register it
 
         // Create new user
