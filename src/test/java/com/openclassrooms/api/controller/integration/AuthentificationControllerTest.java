@@ -102,8 +102,7 @@ class AuthentificationControllerTest {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value("Invalid credentials"));
+                .andExpect(status().isBadRequest());
     }
 
 
@@ -117,22 +116,5 @@ class AuthentificationControllerTest {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.message").value("Invalid credentials"));
     }
-
-//    @Test
-//    void shouldShowUserDetails() throws Exception {
-//        mockMvc.perform(get("/api/auth/me")
-//                        .header("Authorization", "test@test.com")
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.email").exists());
-//    }
-//
-//    @Test
-//    void shouldNotShowUserDetails() throws Exception {
-//        mockMvc.perform(get("/api/auth/me")
-//                        .header("Authorization", "none@test.com")
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isUnauthorized());
-//    }
 
 }

@@ -144,9 +144,6 @@ class AuthentificationControllerTest {
                             .build());
 
             conversionService.addConverter(converter);
-
-//            Mockito.when(conversionService.convert(any(User.class), notNull(AuthMeResponse.class)))
-//                    .thenReturn(AuthMeResponse.builder().email("test@test.com").build());
         }
 
         @Test

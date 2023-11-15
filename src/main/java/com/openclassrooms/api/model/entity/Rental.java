@@ -25,7 +25,7 @@ public class Rental {
 
     private String name;
 
-    @Column(precision = 10, scale = 0)
+    @Column(precision = 10)
     private BigDecimal surface;
 
     @Column(precision = 12, scale = 2)

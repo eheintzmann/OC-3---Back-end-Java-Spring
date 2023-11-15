@@ -63,13 +63,8 @@ public class AuthentificationController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public TokenResponse register(@RequestBody(required = false) Optional<RegisterRequest> optRequest)
+    public TokenResponse register(@RequestBody RegisterRequest request)
             throws  BadRequestException {
-
-        if (optRequest.isEmpty()) {
-            throw new BadRequestException();
-        }
-        RegisterRequest request = optRequest.get();
 
         if (!validator.validate(request).isEmpty()) {
             throw new BadRequestException();
@@ -99,13 +94,8 @@ public class AuthentificationController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
 
-    public TokenResponse login(@RequestBody(required = false) Optional<LoginRequest> optRequest)
+    public TokenResponse login(@RequestBody LoginRequest request)
             throws InvalidCredentialsException {
-
-        if (optRequest.isEmpty()) {
-            throw new InvalidCredentialsException(ERROR_MESSAGE);
-        }
-        LoginRequest request = optRequest.get();
 
         if (!validator.validate(request).isEmpty()) {
             throw new InvalidCredentialsException(ERROR_MESSAGE);
