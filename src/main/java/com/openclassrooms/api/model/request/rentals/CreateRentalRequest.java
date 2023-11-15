@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -16,11 +16,12 @@ public class CreateRentalRequest {
     private String name;
 
     @NotNull
-    private BigInteger surface;
+    private BigDecimal surface;
 
     @NotNull
-    private BigInteger price;
+    private BigDecimal price;
 
+    @NotNull
     private MultipartFile picture;
 
     @NotNull

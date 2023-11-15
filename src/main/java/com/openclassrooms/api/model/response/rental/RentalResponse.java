@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
@@ -18,9 +18,9 @@ public class RentalResponse implements Response {
 
     private String name;
 
-    private BigInteger surface;
+    private BigDecimal surface;
 
-    private BigInteger price;
+    private BigDecimal price;
 
     private String picture;
 

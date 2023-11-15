@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
@@ -25,11 +25,11 @@ public class Rental {
 
     private String name;
 
-    @Column(precision = 10)
-    private BigInteger surface;
+    @Column(precision = 10, scale = 0)
+    private BigDecimal surface;
 
-    @Column(precision = 10)
-    private BigInteger price;
+    @Column(precision = 12, scale = 2)
+    private BigDecimal price;
 
     private String picture;
 

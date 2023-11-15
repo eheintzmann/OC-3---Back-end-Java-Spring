@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -15,10 +15,10 @@ public class UpdateRentalRequest {
     private String name;
 
     @NotNull
-    private BigInteger surface;
+    private BigDecimal surface;
 
     @NotNull
-    private BigInteger price;
+    private BigDecimal price;
 
     @NotNull
     private String description;

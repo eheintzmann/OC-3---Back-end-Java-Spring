@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Slf4j
@@ -48,8 +48,8 @@ public class RentalService {
 
     public boolean saveRental(
             String name,
-            BigInteger surface,
-            BigInteger price,
+            BigDecimal surface,
+            BigDecimal price,
             MultipartFile picture,
             String description,
             String username
@@ -103,8 +103,8 @@ public class RentalService {
     public boolean updateRental(
             int id,
             String name,
-            BigInteger surface,
-            BigInteger price,
+            BigDecimal surface,
+            BigDecimal price,
             String description,
             String principalName
     ) {
