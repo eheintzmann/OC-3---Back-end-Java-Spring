@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "${application.title}",
-                description = "${application.description}",
-                version = "${application.version}"
+                title = "${api.title}",
+                description = "${api.description}",
+                version = "${api.version}"
         )
 )
 @SecurityScheme(
