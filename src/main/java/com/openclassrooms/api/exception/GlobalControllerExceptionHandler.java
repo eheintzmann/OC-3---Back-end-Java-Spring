@@ -9,9 +9,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Global Controller for Exception handling
+ */
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
 
+    /**
+     * handler for error 401
+     *
+     * @param ex InvalidCredentialsException
+     * @return Response
+     */
     @ExceptionHandler(InvalidCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @Hidden
@@ -19,6 +28,12 @@ public class GlobalControllerExceptionHandler {
         return ex.getMessage() == null ? new EmptyResponse() : new MessageResponse(ex.getMessage());
     }
 
+    /**
+     * handler for error 400
+     *
+     * @param ex BadRequestException
+     * @return Response
+     */
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @Hidden

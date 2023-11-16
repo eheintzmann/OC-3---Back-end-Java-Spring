@@ -11,6 +11,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/**
+ * Rental entity
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

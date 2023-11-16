@@ -11,6 +11,9 @@ import lombok.*;
 
 import java.time.Instant;
 
+/**
+ * AuthMeResponse DTO
+ */
 @Builder
 @Data
 public class AuthMeResponse implements Response {

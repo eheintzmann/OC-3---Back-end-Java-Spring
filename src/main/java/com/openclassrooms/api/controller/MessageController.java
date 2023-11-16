@@ -19,18 +19,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * Message REST controller
+ */
 @Tag( name = "message", description = "Messages operations" )
 @RestController
 @RequestMapping("/api/messages")
 public class MessageController {
-
     private final MessageService messageService;
 
+    /**
+     * Constructor for MessageController class
+     *
+     * @param messageService MessageService
+     */
     public MessageController(MessageService messageService) {
         this.messageService = messageService;
     }
 
+    /**
+     * Send message route
+     *
+     * @param request MessageRequest
+     * @return MessageResponse
+     * @throws BadRequestException BadRequestException
+     */
     @Operation(summary = "message", description = "Send new message")
     @SecurityRequirement(name = "Bearer Authentication")
     @ApiResponse( responseCode = "200", content = @Content(

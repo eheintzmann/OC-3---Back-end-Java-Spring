@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * RegisterRequest DTO
+ */
 @Builder
 @Data
 public class RegisterRequest {

@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Optional;
 
+/**
+ * Authentification REST controller
+ */
 @Slf4j
 @Tag( name =  "auth", description = "Authentification operations" )
 @RestController
@@ -36,6 +39,12 @@ public class AuthentificationController {
     private final ConversionService conversionService;
     private final Validator validator;
 
+    /**
+     * Constructor for AuthentificationController class
+     *
+     * @param authentificationService AuthentificationService
+     * @param conversionService ConversionService
+     */
     public AuthentificationController(
             AuthentificationService authentificationService,
             ConversionService conversionService
@@ -46,6 +55,13 @@ public class AuthentificationController {
         this.validator = factory.getValidator();
     }
 
+    /**
+     * Register route
+     *
+     * @param request RegisterRequest
+     * @return TokenResponse
+     * @throws BadRequestException BadRequestException
+     */
     @Operation(summary = "register", description = "Sign up")
 
     @ApiResponses(value = {
@@ -79,6 +95,13 @@ public class AuthentificationController {
                 .orElseThrow(BadRequestException::new);
     }
 
+    /**
+     * Login route
+     *
+     * @param request LoginRequest
+     * @return TokenResponse
+     * @throws InvalidCredentialsException InvalidCredentialsException
+     */
     @Operation(summary = "login", description = "Sign in")
     @ApiResponse( responseCode = "200", content = @Content(
             mediaType = "application/json",
@@ -108,6 +131,13 @@ public class AuthentificationController {
                 .orElseThrow(() -> new InvalidCredentialsException(ERROR_MESSAGE));
     }
 
+    /**
+     * auth/me route
+     *
+     * @param principal Principal
+     * @return AuthMeResponse
+     * @throws InvalidCredentialsException InvalidCredentialsException
+     */
     @Operation(summary = "me", description = "Who am I")
     @SecurityRequirement(name = "Bearer Authentication")
     @ApiResponse( responseCode = "200", content = @Content(

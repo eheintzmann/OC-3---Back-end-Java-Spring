@@ -10,10 +10,19 @@ import org.springframework.core.convert.converter.Converter;
 
 import java.util.HashSet;
 
+/**
+ * Configuration class for Conversion service
+ * @See <a href="https://docs.spring.io/spring-framework/reference/core/validation/convert.html#core-convert-Spring-config">Configuring a ConversionService</a>
+ */
 @Configuration
 public class ConversionConfig {
 
-    /** @See <a href="https://docs.spring.io/spring-framework/reference/core/validation/convert.html#core-convert-Spring-config">Configuring a ConversionService</a> */
+    /**
+     * New ConversionService instance
+     * @See <a href="https://docs.spring.io/spring-framework/reference/core/validation/convert.html">Spring Type Conversion</a>
+     *
+     * @return ConversionServiceFactoryBean
+     */
     @Bean
     public ConversionServiceFactoryBean conversionService() {
         ConversionServiceFactoryBean conversionService = new ConversionServiceFactoryBean();

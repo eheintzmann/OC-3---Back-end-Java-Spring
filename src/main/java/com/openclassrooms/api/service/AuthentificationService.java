@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Authentification service
+ */
 @Slf4j
 @Data
 @Service
@@ -27,6 +30,14 @@ public class AuthentificationService {
     private UserRepository userRepository;
     private UserDetailsService userDetailsService;
 
+    /**
+     * Constructor for AuthentificationService class
+     *
+     * @param authManager AuthenticationManager
+     * @param jwtService JwtService
+     * @param passwordEncoder PasswordEncoder
+     * @param userRepository UserRepository
+     */
     @Autowired
     AuthentificationService(
             AuthenticationManager authManager,
@@ -40,6 +51,14 @@ public class AuthentificationService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Register a new user
+     *
+     * @param email user email
+     * @param name username
+     * @param password user password
+     * @return Optional token
+     */
     public Optional<String> registerUser(String email, String name, String password) {
 
         // If user exists, stop registration, do not return a token
@@ -63,6 +82,13 @@ public class AuthentificationService {
         return Optional.of(jwtService.generateAccessToken(user));
     }
 
+    /**
+     * Log in an existing user
+     *
+     * @param email user email
+     * @param password user password
+     * @return Optional token
+     */
     public Optional<String> loginUser(String email, String password) {
 
         Authentication authentication;
@@ -80,9 +106,15 @@ public class AuthentificationService {
         return Optional.of(jwtService.generateAccessToken(user));
     }
 
-    public Optional<User> authUser(String username) {
+    /**
+     * Return details of a given user
+     *
+     * @param email user email
+     * @return Optional User
+     */
+    public Optional<User> authUser(String email) {
 
-        return this.userRepository.findByEmail(username);
+        return this.userRepository.findByEmail(email);
     }
 
 }

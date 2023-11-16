@@ -8,6 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
+/**
+ * CreateRentalRequest DTO
+ */
 @Data
 @Builder
 public class CreateRentalRequest {

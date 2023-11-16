@@ -18,12 +18,23 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
+/**
+ * Jwt service
+ */
 @Slf4j
 @Service
 public class JwtService {
     private static final Duration EXPIRE_DURATION = Duration.parse("PT24H");
     private final SecretKey secretKey;
 
+    /**
+     * Constructor for JwtService class
+     *
+     * @param appJwtSecret String
+     * @param appJwtSalt String
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     * @throws InvalidKeySpecException InvalidKeySpecException
+     */
     public JwtService(
             @Value("${app.jwt.secret}") String appJwtSecret,
             @Value("${app.jwt.salt}") String appJwtSalt
@@ -31,16 +42,34 @@ public class JwtService {
         this.secretKey = getKeyFromPassword(appJwtSecret, appJwtSalt);
     }
 
+    /**
+     * Create a JSON Web Token
+     *
+     * @param user User
+     * @return Access Token
+     */
     public String generateAccessToken(User user) {
         return Jwts.builder()
+                // Subject is combination of the user’s ID and email, separated by a comma
                 .subject(String.format("%s,%s", user.getId(), user.getEmail()))
+                // Issuer name is OCRentalAPI
                 .issuer("OCRentalAPI")
+                // Token is issued at the current date and time
                 .issuedAt(Date.from(Instant.now()))
+                // Token expires after 24 hours
                 .expiration(Date.from(Instant.now().plus(EXPIRE_DURATION)))
+                // Token is signed using a secret key. Signature algorithm is HMAC using SHA-512.
                 .signWith(secretKey, Jwts.SIG.HS512)
+                // Compact token into its final String form.
                 .compact();
     }
 
+    /**
+     * Verify a given JSON Web Token
+     *
+     * @param token String
+     * @return boolean
+     */
     public boolean validateAccessToken(String token) {
         try {
             Jwts.parser()
@@ -63,10 +92,23 @@ public class JwtService {
         return false;
     }
 
+    /**
+     * Gets the value of the subject field of a given token.
+     * Subject contains User ID and email
+     *
+     * @param token String
+     * @return String
+     */
     public String getSubject(String token) {
         return parseClaims(token).getSubject();
     }
 
+    /**
+     * Parse JWT for information (claims)
+     *
+     * @param token String
+     * @return Claims
+     */
     private Claims parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
@@ -75,6 +117,14 @@ public class JwtService {
                 .getPayload();
     }
 
+    /**
+     *
+     * @param password String
+     * @param salt String
+     * @return SecretKey
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     * @throws InvalidKeySpecException InvalidKeySpecException
+     */
     private static SecretKey getKeyFromPassword(String password, String salt)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
 

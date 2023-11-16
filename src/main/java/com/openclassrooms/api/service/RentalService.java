@@ -14,6 +14,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+/**
+ * Rental service
+ */
 @Slf4j
 @Service
 public class RentalService {
@@ -21,6 +24,13 @@ public class RentalService {
     private final UserRepository userRepository;
     private final StorageService storageService;
 
+    /**
+     * Constructor for RentalService class
+     *
+     * @param rentalRepository RentalRepository
+     * @param userRepository UserRepository
+     * @param storageService StorageService
+     */
     public RentalService(
             RentalRepository rentalRepository,
             UserRepository userRepository,
@@ -32,13 +42,23 @@ public class RentalService {
     }
 
 
+    /**
+     * get a Rental by id
+     *
+     * @param id Rental id
+     * @return Optional Rental
+     */
     public Optional<Rental> getRental(final int id) {
 
         // Retrieve rental
         return rentalRepository.findById(id);
     }
 
-
+    /**
+     * List all Rentals
+     *
+     * @return Iterable of Rental
+     */
     public Iterable<Rental> listRentals() {
 
         // Retrieve rentals
@@ -46,6 +66,17 @@ public class RentalService {
     }
 
 
+    /**
+     * Save new Rental
+     *
+     * @param name Rental name
+     * @param surface Rental surface
+     * @param price Rental price
+     * @param picture Rental picture
+     * @param description Rental description
+     * @param username Rental username
+     * @return boolean
+     */
     public boolean saveRental(
             String name,
             BigDecimal surface,
@@ -100,6 +131,16 @@ public class RentalService {
     }
 
 
+    /**
+     * Update existing Rental
+     * @param id Rental ID
+     * @param name Rental name
+     * @param surface Rental surface
+     * @param price Rental price
+     * @param description Rental description
+     * @param principalName Principal name
+     * @return boolean
+     */
     public boolean updateRental(
             int id,
             String name,

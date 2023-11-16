@@ -6,6 +6,9 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for OpenAPI / Swagger
+ */
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
@@ -20,6 +23,4 @@ import org.springframework.context.annotation.Configuration;
         bearerFormat = "JWT",
         scheme = "bearer"
 )
-public class OpenAPISecurityConfig {
-
-}
+public class OpenAPIConfig {}

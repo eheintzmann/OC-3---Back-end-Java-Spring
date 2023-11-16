@@ -10,6 +10,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
+/**
+ * Message entity
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

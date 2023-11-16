@@ -10,6 +10,9 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/**
+ * RentalResponse DTO
+ */
 @Data
 @Builder
 public class RentalResponse implements Response {

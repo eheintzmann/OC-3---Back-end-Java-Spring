@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * UpdateRentalRequest DTO
+ */
 @Data
 @Builder
 public class UpdateRentalRequest {

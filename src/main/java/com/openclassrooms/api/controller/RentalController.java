@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Optional;
 
 
+/**
+ * Rental REST controller
+ */
 @Slf4j
 @Tag( name = "rental", description = "Rentals operations" )
 @SecurityRequirement(name = "Bearer Authentication")
@@ -41,6 +44,11 @@ public class RentalController {
     private final RentalService rentalService;
     private final ConversionService conversionService;
 
+    /**
+     * Constructor for RentalController class
+     * @param rentalService RentalService
+     * @param conversionService ConversionService
+     */
     public RentalController(
             RentalService rentalService,
             ConversionService conversionService
@@ -50,13 +58,16 @@ public class RentalController {
     }
 
 
+    /**
+     * Rentals list route
+     * @return RentalsResponse
+     */
     @Operation(summary = "get all", description = "Get all rentals")
     @GetMapping(
             path = "",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public RentalsResponse getRentals() {
-
 
         Iterable<Rental> rentals = rentalService.listRentals();
 
@@ -71,6 +82,13 @@ public class RentalController {
     }
 
 
+    /**
+     * Get Rental route
+     *
+     * @param id Rental id
+     * @return RentalResponse
+     * @throws InvalidCredentialsException InvalidCredentialsException
+     */
     @Operation(summary = "get", description = "Get rental by id")
     @GetMapping(
             path = "/{id}",
@@ -86,6 +104,14 @@ public class RentalController {
     }
 
 
+    /**
+     * Create Rental route
+     *
+     * @param request CreateRentalRequest
+     * @param principal Principal
+     * @return MessageResponse
+     * @throws InvalidCredentialsException InvalidCredentialsException
+     */
     @Operation(summary = "create", description = "Create new rental")
     @PostMapping(
             path = "",
@@ -111,6 +137,15 @@ public class RentalController {
     }
 
 
+    /**
+     * Update Rental route
+     *
+     * @param id Rental id
+     * @param request UpdateRentalRequest
+     * @param principal Principal
+     * @return MessageResponse
+     * @throws InvalidCredentialsException InvalidCredentialsException
+     */
     @Operation(summary = "update", description = "Update existing rental")
     @PutMapping(
             path = "/{id}",

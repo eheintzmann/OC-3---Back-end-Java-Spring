@@ -16,17 +16,33 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-// JwtFilter extends OncePerRequestFilter class to guarantee a single execution per request
+/**
+ *
+ * Filter in the middle of Spring Security filters chain.
+ * JwtFilter extends OncePerRequestFilter class to guarantee a single execution per request
+ */
 @NonNullApi
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-
     private final JwtService jwtService;
 
+    /**
+     * Constructor for JwtFilter class
+     * @param jwtService JwtService
+     */
     public JwtFilter(JwtService jwtService) {
         this.jwtService = jwtService;
     }
 
+    /**
+     *  Tells Spring if the user is authenticated, and continue the downstream filters.
+     *
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @param filterChain FilterChain
+     * @throws ServletException ServletException
+     * @throws IOException IOException
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -35,6 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
     )
             throws ServletException, IOException {
 
+        // If no Bearer token in Authorization header, continue the filter chain without updating authentication context
         if (!hasAuthorizationBearer(request)) {
             filterChain.doFilter(request, response);
             return;
@@ -42,38 +59,64 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = getAccessToken(request);
 
+        // If the token is invalid, continue the filter chain without updating authentication context
         if (!jwtService.validateAccessToken(token)) {
             filterChain.doFilter(request, response);
             return;
         }
 
+        // If the token valid, update the authentication context with the user details ID and email
         setAuthenticationContext(token, request);
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Check if request has a Bearer token in Authorization header
+     *
+     * @param request HttpServletRequest
+     * @return boolean
+     */
     private boolean hasAuthorizationBearer(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         return !ObjectUtils.isEmpty(header) && header.startsWith("Bearer");
     }
 
+    /**
+     * Return an Access Token, read from Authorization header
+     *
+     * @param request HttpServletRequest
+     * @return token
+     */
     private String getAccessToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         return header.split(" ")[1].trim();
     }
 
+    /**
+     *  Update the authentication context with the user details ID and email.
+     *
+     * @param token Access Token
+     * @param request HttpServletRequest
+     */
     private void setAuthenticationContext(String token, HttpServletRequest request) {
         UserDetails userDetails = getUserDetails(token);
 
-        UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                null
+        );
 
-        authentication.setDetails(
-                new WebAuthenticationDetailsSource().buildDetails(request));
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
+    /**
+     *
+     * @param token Access Token
+     * @return UserDetails
+     */
     private UserDetails getUserDetails(String token) {
 
         String subject = jwtService.getSubject(token);

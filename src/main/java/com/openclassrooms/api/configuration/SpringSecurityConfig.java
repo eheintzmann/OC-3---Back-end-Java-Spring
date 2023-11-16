@@ -22,19 +22,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
+/**
+ * Configuration class for Spring Security
+ */
 @Slf4j
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
-
     private final JwtFilter jwtFilter;
     private final UserRepository userRepository;
 
+    /**
+     * Constructor for SpringSecurityConfig class
+     *
+     * @param jwtFilter JwtFilter
+     * @param userRepository UserRepository
+     */
     public SpringSecurityConfig(JwtFilter jwtFilter, UserRepository userRepository) {
         this.jwtFilter = jwtFilter;
         this.userRepository = userRepository;
     }
 
+    /**
+     * New UserDetailsService instance
+     *
+     * @return UserDetailsService
+     */
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
@@ -42,17 +55,36 @@ public class SpringSecurityConfig {
                         () -> new UsernameNotFoundException("User " + username + " not found"));
     }
 
+    /**
+     * New PasswordEncoder instance
+     *
+     * @return BCryptPasswordEncoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * New AuthenticationManager instance
+     *
+     * @param authConfig AuthenticationManager instance
+     * @return AuthenticationManager
+     * @throws Exception Exception
+     */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
+    /**
+     * New SecurityFilterChain instance
+     *
+     * @param http HttpSecurity
+     * @return SecurityFilterChain
+     * @throws Exception Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -86,7 +118,7 @@ public class SpringSecurityConfig {
                 )
         );
 
-        // Add a filter to validate the tokens with every request
+        // Add a filter to validate the tokens with every authenticated request
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -13,12 +13,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * Store files in filesystem
+ */
 @Slf4j
 @Service
 public class FileSystemStorageService implements StorageService {
-
     private final Path rootLocation;
 
+    /**
+     * Constructor for FileSystemStorageService class
+     *
+     * @param appStorage String
+     */
     public FileSystemStorageService(@Value("${app.storage.path}") String appStorage) {
 
         if (appStorage.trim().isEmpty()) {
@@ -29,6 +36,9 @@ public class FileSystemStorageService implements StorageService {
     }
 
 
+    /**
+     * Create upload directory
+     */
     @Override
     public void init() {
         try {
@@ -40,6 +50,13 @@ public class FileSystemStorageService implements StorageService {
     }
 
 
+    /**
+     * Store a given file in filesystem
+     *
+     * @param file MultipartFile
+     * @param subDir subdirectory to save file
+     * @return filename
+     */
     @Override
     public String store(MultipartFile file, String subDir) {
         if (file.isEmpty()) {
@@ -71,6 +88,12 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    /**
+     * Return an unique filename for a file
+     *
+     * @param originalPath path of file
+     * @return path of file
+     */
     private Path getUniqueFileName(Path originalPath) {
 
         final Path parentDir = originalPath.getParent();

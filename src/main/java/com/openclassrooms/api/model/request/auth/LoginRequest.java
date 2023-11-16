@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * LoginRequest DTO
+ */
 @Builder
 @Data
 public class LoginRequest {

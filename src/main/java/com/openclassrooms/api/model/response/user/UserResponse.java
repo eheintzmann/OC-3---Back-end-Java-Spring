@@ -8,6 +8,9 @@ import lombok.Data;
 
 import java.time.Instant;
 
+/**
+ * UserResponse DTO
+ */
 @Data
 @Builder
 public class UserResponse implements Response {

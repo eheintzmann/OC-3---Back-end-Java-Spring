@@ -4,8 +4,17 @@ import com.openclassrooms.api.model.entity.Rental;
 import com.openclassrooms.api.model.response.rental.RentalResponse;
 import org.springframework.core.convert.converter.Converter;
 
+/**
+ * Convert Rental to RentalResponse
+ */
 public class RentalToRentalResponse implements Converter<Rental, RentalResponse> {
 
+    /**
+     * Convert Rental to RentalResponse
+     *
+     * @param rental Rental
+     * @return RentalResponse
+     */
     @Override
     public RentalResponse convert(Rental rental) {
         return RentalResponse.builder()

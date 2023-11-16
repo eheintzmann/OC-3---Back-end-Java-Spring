@@ -3,6 +3,9 @@ package com.openclassrooms.api.model.request.message;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+/**
+ * MessageRequest DTO
+ */
 @Data
 public class MessageRequest {
 

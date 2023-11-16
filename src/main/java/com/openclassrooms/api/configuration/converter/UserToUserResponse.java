@@ -4,9 +4,17 @@ import com.openclassrooms.api.model.entity.User;
 import com.openclassrooms.api.model.response.user.UserResponse;
 import org.springframework.core.convert.converter.Converter;
 
-
+/**
+ * Convert User to UserResponse
+ */
 public class UserToUserResponse implements Converter<User, UserResponse> {
 
+    /**
+     * Convert User to UserResponse
+     *
+     * @param user User
+     * @return User Response
+     */
     @Override
     public UserResponse convert(User user) {
         return UserResponse.builder()

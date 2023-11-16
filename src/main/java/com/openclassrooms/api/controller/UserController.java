@@ -14,20 +14,33 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-
+/**
+ * User REST controller
+ */
 @Tag( name = "user", description = "Users operations" )
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-
     private final UserService userService;
     private final ConversionService conversionService;
 
+    /**
+     * Constructor for UserController class
+     *
+     * @param userService UserService
+     * @param conversionService ConversionService
+     */
     public UserController(UserService userService, ConversionService conversionService) {
         this.userService = userService;
         this.conversionService = conversionService;
     }
 
+    /**
+     * Get user route
+     * @param id User id
+     * @return UserResponse
+     * @throws InvalidCredentialsException InvalidCredentialsException
+     */
     @Operation(summary = "get", description = "Get user by id")
     @SecurityRequirement(name = "Bearer Authentication")
     @ApiResponse( responseCode = "200", content = @Content(
