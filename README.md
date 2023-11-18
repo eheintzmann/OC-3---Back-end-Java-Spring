@@ -52,7 +52,7 @@ Edit this new file, and modify the variables :__
 _Please note that the images you upload will be stored by default
 in the OpenClassRooms/Rental subdirectory of your personal folder._
 
-1. In the project root location, run `./mvnw spring-boot:run`
+1. From the project root location, execute Maven Goal _spring-boot:run_ : `./mvnw spring-boot:run`
 2. API is accessible at : http://localhost:9000/api/
 3. Swagger UI can be viewed at : http://localhost:9000/doc/swagger-ui.html
 
@@ -83,7 +83,7 @@ This is not the recommended way for a production server._
 _Please note that the images you upload will be stored by default
 in the OpenClassRooms/Rental subdirectory of your personal folder._
 
-1. From the project root location, run `./mvnw spring-boot:run`
+1. From the project root location, execute Maven Goal _spring-boot:run_ : `./mvnw spring-boot:run`
 2. API is accessible at : http://localhost:9000/api/
 3. Swagger UI can be viewed at : http://localhost:9000/doc/swagger-ui.html
 
