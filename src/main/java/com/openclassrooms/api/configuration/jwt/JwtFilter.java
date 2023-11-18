@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,12 +16,15 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * Filter in the middle of Spring Security filters chain.
  * JwtFilter extends OncePerRequestFilter class to guarantee a single execution per request
  */
+@Slf4j
 @NonNullApi
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -78,7 +82,16 @@ public class JwtFilter extends OncePerRequestFilter {
      */
     private boolean hasAuthorizationBearer(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
-        return !ObjectUtils.isEmpty(header) && header.startsWith("Bearer");
+        if (ObjectUtils.isEmpty(header)) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile("^Bearer .+");
+        Matcher matcher = pattern.matcher(header);
+        if (matcher.find()) {
+            return true;
+        }
+        log.error("Invalid Authorization header : " + "\"" + header + "\"");
+        return false;
     }
 
     /**
@@ -89,7 +102,7 @@ public class JwtFilter extends OncePerRequestFilter {
      */
     private String getAccessToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
-        return header.split(" ")[1].trim();
+        return header.split(" ",2)[1].trim();
     }
 
     /**

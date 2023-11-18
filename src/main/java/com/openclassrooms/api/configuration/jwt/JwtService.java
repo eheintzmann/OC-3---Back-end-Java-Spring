@@ -16,6 +16,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 /**
@@ -24,7 +25,8 @@ import java.util.Date;
 @Slf4j
 @Service
 public class JwtService {
-    private static final Duration EXPIRE_DURATION = Duration.parse("PT24H");
+    private final Duration expireDuration;
+    private final String issuer;
     private final SecretKey secretKey;
 
     /**
@@ -37,9 +39,13 @@ public class JwtService {
      */
     public JwtService(
             @Value("${app.jwt.secret}") String appJwtSecret,
-            @Value("${app.jwt.salt}") String appJwtSalt
+            @Value("${app.jwt.salt}") String appJwtSalt,
+            @Value("${app.jwt.expiration}") String appJwtExpiration,
+            @Value("${app.jwt.issuer}") String appJwtIssuer
     ) throws NoSuchAlgorithmException, InvalidKeySpecException {
         this.secretKey = getKeyFromPassword(appJwtSecret, appJwtSalt);
+        this.expireDuration = Duration.of(Long.parseLong(appJwtExpiration), ChronoUnit.HOURS);
+        this.issuer = appJwtIssuer;
     }
 
     /**
@@ -52,12 +58,12 @@ public class JwtService {
         return Jwts.builder()
                 // Subject is combination of the user’s ID and email, separated by a comma
                 .subject(String.format("%s,%s", user.getId(), user.getEmail()))
-                // Issuer name is OCRentalAPI
-                .issuer("OCRentalAPI")
+                // Issuer name
+                .issuer(issuer)
                 // Token is issued at the current date and time
                 .issuedAt(Date.from(Instant.now()))
-                // Token expires after 24 hours
-                .expiration(Date.from(Instant.now().plus(EXPIRE_DURATION)))
+                // Token expiration
+                .expiration(Date.from(Instant.now().plus(expireDuration)))
                 // Token is signed using a secret key. Signature algorithm is HMAC using SHA-512.
                 .signWith(secretKey, Jwts.SIG.HS512)
                 // Compact token into its final String form.
@@ -74,21 +80,24 @@ public class JwtService {
         try {
             Jwts.parser()
                     .verifyWith(secretKey)
+                    .requireIssuer(issuer)
                     .build()
                     .parseSignedClaims(token);
-
             return true;
         } catch (ExpiredJwtException ex) {
-            log.error("JWT expired !" + ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            log.error("Token is null, empty or only whitespace !" + ex.getMessage());
+            log.error("JWT expired ! " + ex.getMessage());
         } catch (MalformedJwtException ex) {
-            log.error("Token is invalid !" + ex.getMessage());
+            log.error("Token is invalid ! " + ex.getMessage());
         } catch (UnsupportedJwtException ex) {
-            log.error("JWT is not supported !" + ex.getMessage());
+            log.error("JWT is not supported ! " + ex.getMessage());
         } catch (SignatureException ex) {
-            log.error("Signature validation failed !" + ex.getMessage());
+            log.error("Signature validation failed ! " + ex.getMessage());
+        } catch (IncorrectClaimException ex) {
+            log.error("Incorrect claimn ! " + ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            log.error("Token is null, empty or only whitespace ! " + ex.getMessage());
         }
+
         return false;
     }
 
